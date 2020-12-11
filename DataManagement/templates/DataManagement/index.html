@@ -1,0 +1,129 @@
+{% extends 'RealtimeAPS/base.html' %}
+
+{% block body_block %}
+    <div class="container-fluid w-100 pr-235 my-2">
+        <form id="data-upload-form" action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row h-100 rounded border border-dark pt-3">
+                <div class="col-lg-3 col-md-6 col-12 h-100">
+                    <div class="form-group">
+                        <label for="project_name">Project Name</label>
+                        <select id="proj_sel" class="form-control border-dark" name="project_name" onchange="update_sensors(this.value)">
+                            
+                            {% for p in projects %}
+                                <option value="{{ p.name }}">{{ p.name }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-12 h-100">
+                    <div class="form-group">
+                        <label for="sensor_number">Sensor Number</label>
+                        <select id="sensor_sel" class="form-control border-dark" name="sensor_number" onchange="select_sensor(this.value)">
+                            
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-1 col-md-3 col-6 h-100">
+                    <label class="pb-3" for=""></label> <br>
+                    <input class="btn btn-success border border-dark" type="submit" value="Archive">
+                </div>
+                <div class="col-lg-1 col-md-3 col-6 h-100">
+                    <label class="pb-3" for=""></label> <br>
+                    <input class="btn btn-danger border border-dark" type="submit" value="Delete">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="pr-235">
+        <form class="pr-5" action="{% url 'RealtimeAPS:projects' %}" method="POST">
+            {% csrf_token %}
+            <h2>Logs</h2>
+            <p id="sensor_p" style="display: inline;">sensor</p> @
+            <p id="proj_p" style="display: inline;">project</p>
+            <!-- <table class="table table-bordered table-sm">
+                <thead class="bg-1" style="color: #e0fbfc;">
+                    <tr>
+                        <th scope="col" style="width: 250px;">Project name</th>
+                        <th scope="col" style="width: 300px;">Usernames</th>
+                        <th scope="col" style="width: 300px;">Sensors</th>
+                    </tr>
+                </thead>
+                <tbody>
+    
+                    {% for p in projects %}
+                    <tr>
+                        <td><a href="{% url 'RealtimeAPS:project_detail' pk=p.pk %}">{{ p.name }}</a></td>
+                        <td>
+    
+                            {% if p.projects.all %}
+                            <select class="px-2 bg-2" name="username">
+    
+                                {% for u in p.projects.all %}
+                                <option value="{{ u.user.username }}">{{ u.user.username }}</option>
+                                {% endfor %}
+    
+                            </select>
+                            {% else %}
+                            No assigned users
+                            {% endif %}
+    
+                        </td>
+                        <td>
+    
+                            {% if p.sensors.all %}
+                            <select class="px-2 bg-2" name="sensor">
+    
+                                {% for s in p.sensors.all %}
+                                <option>{{ s }}</option>
+                                {% endfor %}
+    
+                            </select>
+                            {% else %}
+                            No attached sensors
+                            {% endif %}
+    
+                        </td>
+                    </tr>
+                    {% endfor %}
+    
+                </tbody>
+            </table> -->
+        </form>
+    </div>
+    <script type="text/javascript">
+        function update_logs(proj, serial) {
+            
+        }
+
+        function update_sensors(proj) {
+            var data = JSON.parse("{{ sensors|escapejs }}");
+            var proj_p = document.querySelector("#proj_p");
+            var sensor_p = document.querySelector("#sensor_p");
+            proj_p.innerHTML = proj;
+            sensor_p.innerHTML = data[proj][0];
+            update_logs(proj, sensor_p.innerHTML);
+            var sel = document.querySelector("#sensor_sel");
+            while (sel.children.length != 0) {
+                sel.removeChild(sel.lastElementChild);
+            }
+            for (var s in data[proj]) {
+                var opt = document.createElement('option');
+                opt.value = data[proj][s];
+                opt.innerHTML = data[proj][s];
+                sel.appendChild(opt);
+            }
+        }
+        var proj = document.querySelector("#proj_sel").value;
+        update_sensors(proj);
+
+        function select_sensor(serial) {
+            var proj_p = document.querySelector("#proj_p");
+            var sensor_p = document.querySelector("#sensor_p");
+            sensor_p.innerHTML = serial;
+            update_logs(proj_p.innerHTML, sensor_p.innerHTML);
+        }
+    </script>
+{% endblock %}
+

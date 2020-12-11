@@ -1,0 +1,27 @@
+{% extends 'RealtimeAPS/base.html' %}
+
+{% block body_block %}
+    <div class="row">
+        <div class="col-lg-4 col-md-6 col-8 container bg-1 rounded py-2 mt-2">
+            <h2 class="text-center fg-2 mb-3">Attach sensor</h2>
+            <form id="login-form" class="m-auto" action="{% url 'RealtimeAPS:sensor_add' pk=project.pk %}" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input class="form-control" type="text" name="serial" placeholder="Serial number">
+                </div>
+                <div class="form-group">
+                    <select id="type_select" class="w-100 px-3" name="type" onchange="this.nextElementSibling.value=this.value">
+                        <option value=""></option>
+                        <option value="VM">VM</option>
+                        <option value="TM">TM</option>
+                        <option value="EL">EL</option>
+                        <option value="TR">TR</option>                            
+                    </select>
+                    <input class="w-75" id="type_inp" type="text" name="sensor_type" value="" placeholder="Sensor type">
+                </div>
+    
+                <input class="btn bg-2 mb-2" type="submit" value="Attach">
+            </form>
+        </div>
+    </div>
+{% endblock %}

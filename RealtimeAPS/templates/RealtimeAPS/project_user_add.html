@@ -1,0 +1,23 @@
+{% extends 'RealtimeAPS/base.html' %}
+
+{% block body_block %}
+    <div class="row">
+        <div class="col-lg-4 col-md-6 col-8 container bg-1 rounded py-2 mt-2">
+            <h2 class="text-center fg-2 mb-3">Assign user</h2>
+            <form id="login-form" class="m-auto" action="{% url 'RealtimeAPS:assign' pk=project.pk %}" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <select class="form-control" name="username">
+                        
+                        {% for u in users %}
+                            <option value="{{ u.username }}">{{ u.username }}</option>
+                        {% endfor %}
+                            
+                    </select>
+                </div>
+    
+                <input class="btn bg-2 mb-2" type="submit" value="Assign">
+            </form>
+        </div>
+    </div>
+{% endblock %}

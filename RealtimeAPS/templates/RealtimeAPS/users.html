@@ -1,0 +1,38 @@
+{% extends 'RealtimeAPS/base.html' %}
+
+{% block body_block %}
+    <div class="pr-235">
+        <form class="pr-5" action="{% url 'RealtimeAPS:users' %}" method="POST">
+            {% csrf_token %}
+            <h2>List of all users</h2>
+            <div class="list-action float-left">
+                <input class="btn btn-sm btn-success" type="submit" name="action" value="Add">
+                <input class="btn btn-sm btn-danger" type="submit" name="action" value="Remove">
+            </div>
+            <table class="table table-bordered table-sm">
+                <thead class="bg-1" style="color: #e0fbfc;">
+                    <tr>
+                        <th scope="col" style="width: 35px;">#</th>
+                        <th scope="col" style="width: 200px;">Username</th>
+                        <th scope="col" style="width: 260px;">Company name</th>
+                        <th scope="col" style="width: 260px;">Email</th>
+                        <th scope="col" style="width: 200px;">Phone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    {% for u in users %}
+                        <tr>
+                            <td><input type="checkbox" name="{{ u.pk }}"></td>
+                            <td><a href="{% url 'RealtimeAPS:user_detail' pk=u.pk %}">{{ u.username }}</a></td>
+                            <td>{{ u.info.companyname }}</td>
+                            <td>{{ u.email }}</td>
+                            <td>{{ u.info.phone }}</td>
+                        </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </form>
+    </div>
+{% endblock %}

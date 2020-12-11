@@ -1,0 +1,90 @@
+{% extends 'RealtimeAPS/base.html' %}
+
+{% block body_block %}
+<div class="pr-235">
+    <form class="pr-5" action="{% url 'RealtimeAPS:project_detail' pk=project.pk %}" method="POST">
+        {% csrf_token %}
+        <h2>Edit project information</h2>
+        <div class="list-action float-left">
+            <input class="btn btn-sm btn-success" name="action" type="submit" value="Save">
+            <input class="btn btn-sm btn-danger" name="action" type="submit" value="Cancel">
+        </div>
+        <div class="pl-2 mt-3">
+            <div class="form-group row">
+                <label class="col-lg-2 col-md-3 col-sm-4 col-12 col-from-label" for="project_name">Project name</label>
+                <div class="col-lg-4 col-md-6 col-sm-8 col-12">
+                    <input class="form-control form-control-sm border border-dark" type="text" name="project_name" value="{{ project.name }}">
+                </div>
+            </div>
+        </div>
+    </form>
+    <form class="pr-5" action="{% url 'RealtimeAPS:assign' pk=project.pk %}" method="POST">
+        {% csrf_token %}
+        <h3>Users assigned</h3>
+        
+        {% if request.user.is_superuser %}
+            <div class="list-action float-left">
+                <a class="btn btn-sm btn-success" href="{% url 'RealtimeAPS:assign' pk=project.pk %}">Add</a>
+                <input class="btn btn-sm btn-danger" name="action" type="submit" value="Remove">
+            </div>
+        {% endif %}
+
+        <div style="width: 600px;">
+            <table class="table table-bordered table-sm">
+                <thead class="bg-1" style="color: #e0fbfc;">
+                    <tr>
+                        <th scope="col" style="width: 35px;">#</th>
+                        <th scope="col" style="width: 200px;">Username</th>
+                        <th scope="col" style="width: 350px;">Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+            
+                    {% for u in project.projects.all %}
+                        <tr>
+                            <td><input type="checkbox" name="{{ u.user.pk }}"></td>
+                            <td><a href="{% url 'RealtimeAPS:user_detail' pk=u.user.pk %}">{{ u.user.username }}</a></td>
+                            <td>{{ u.user.email }}</td>
+                        </tr>
+                    {% endfor %}
+            
+                </tbody>
+            </table>
+        </div>
+    </form>
+    <form class="pr-5" action="{% url 'RealtimeAPS:sensor_add' pk=project.pk %}" method="POST">
+        {% csrf_token %}
+        <h3>Sensors</h3>
+        <div class="list-action float-left">
+            <a class="btn btn-sm btn-success" href="{% url 'RealtimeAPS:sensor_add' pk=project.pk %}">Add</a>
+            <input class="btn btn-sm btn-danger" name="action" type="submit" value="Remove">
+        </div>
+        <div style="width: 600px;">
+            <table class="table table-bordered table-sm">
+                <thead class="bg-1" style="color: #e0fbfc;">
+                    <tr>
+                        <th scope="col" style="width: 35px;">#</th>
+                        <th scope="col" style="width: 200px;">Serial Number</th>
+                        <th scope="col" style="width: 200px;">Sensor Type</th>
+                        <th scope="col" style="width: 120px;">Upper Limit</th>
+                        <th scope="col" style="width: 120px;">Lower Limit</th>
+                    </tr>
+                </thead>
+                <tbody>
+    
+                    {% for s in project.sensors.all %}
+                        <tr>
+                            <td><input type="checkbox" name="{{ s.pk }}"></td>
+                            <td><a href="">{{ s.serial }}</a></td>
+                            <td>{{ s.type }}</td>
+                            <td>{{ s.up_lim_1 }}</td>
+                            <td>{{ s.low_lim_1 }}</td>
+                        </tr>
+                    {% endfor %}
+    
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+{% endblock %}

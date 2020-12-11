@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>APS</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'RealtimeAPS/css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="{% static 'RealtimeAPS/js/crazy.js' %}"></script>
+    
+</head>
+
+<body style="background-color: #e0fbfc;">
+    <div class="w-100 bg-1 text-center position-fixed" style="z-index: 10;">
+        <a class="nav-link" href="{% url 'RealtimeAPS:index' %}">
+            <h1 class="fg-2 text-nowrap">APS Asia PDA Enterprise Pte Ltd.</h1>
+        </a>
+        {% if request.user.is_authenticated %}
+            <div class="text-right pr-1 pb-1 m-t-35">
+                <a href="{% url 'RealtimeAPS:logout' %}"><button>Log out</button></a>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if request.path != "/login/" and request.user.is_superuser %}
+        <div class="pt-75 pr-5 bg-3 h-100 position-fixed" style="right: 0;">
+            <ul class="m-l-30" style="list-style: none;">
+                <li>
+                    <a class="nav-link fg-1" href="{% url 'RealtimeAPS:users' %}">User management</a>
+                </li>
+                <li>
+                    <a class="nav-link fg-1" href="{% url 'RealtimeAPS:projects' %}">Projects</a>
+                </li>
+                <li>
+                    <a class="nav-link fg-1" href="{% url 'DataManagement:data' %}">Data management</a>
+                </li>
+            </ul>
+        </div>
+    {% endif %}
+
+    <div class="container-fluid pt-75">
+        {% block body_block %}
+
+        {% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
