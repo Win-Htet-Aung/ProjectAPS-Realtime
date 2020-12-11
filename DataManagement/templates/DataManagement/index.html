@@ -2,7 +2,7 @@
 
 {% block body_block %}
     <div class="container-fluid w-100 pr-235 my-2">
-        <form id="data-upload-form" action="" method="POST" enctype="multipart/form-data">
+        <form id="data-upload-form" action="{% url 'DataManagement:data' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row h-100 rounded border border-dark pt-3">
                 <div class="col-lg-3 col-md-6 col-12 h-100">
@@ -27,11 +27,11 @@
                 </div>
                 <div class="col-lg-1 col-md-3 col-6 h-100">
                     <label class="pb-3" for=""></label> <br>
-                    <input class="btn btn-success border border-dark" type="submit" value="Archive">
+                    <input class="btn btn-success border border-dark" type="submit" name = "action" value="Archive">
                 </div>
                 <div class="col-lg-1 col-md-3 col-6 h-100">
                     <label class="pb-3" for=""></label> <br>
-                    <input class="btn btn-danger border border-dark" type="submit" value="Delete">
+                    <input class="btn btn-danger border border-dark" type="submit" name = "action" value="Delete">
                 </div>
             </div>
         </form>
@@ -42,59 +42,54 @@
             <h2>Logs</h2>
             <p id="sensor_p" style="display: inline;">sensor</p> @
             <p id="proj_p" style="display: inline;">project</p>
-            <!-- <table class="table table-bordered table-sm">
-                <thead class="bg-1" style="color: #e0fbfc;">
-                    <tr>
-                        <th scope="col" style="width: 250px;">Project name</th>
-                        <th scope="col" style="width: 300px;">Usernames</th>
-                        <th scope="col" style="width: 300px;">Sensors</th>
-                    </tr>
-                </thead>
-                <tbody>
-    
-                    {% for p in projects %}
-                    <tr>
-                        <td><a href="{% url 'RealtimeAPS:project_detail' pk=p.pk %}">{{ p.name }}</a></td>
-                        <td>
-    
-                            {% if p.projects.all %}
-                            <select class="px-2 bg-2" name="username">
-    
-                                {% for u in p.projects.all %}
-                                <option value="{{ u.user.username }}">{{ u.user.username }}</option>
-                                {% endfor %}
-    
-                            </select>
-                            {% else %}
-                            No assigned users
-                            {% endif %}
-    
-                        </td>
-                        <td>
-    
-                            {% if p.sensors.all %}
-                            <select class="px-2 bg-2" name="sensor">
-    
-                                {% for s in p.sensors.all %}
-                                <option>{{ s }}</option>
-                                {% endfor %}
-    
-                            </select>
-                            {% else %}
-                            No attached sensors
-                            {% endif %}
-    
-                        </td>
-                    </tr>
-                    {% endfor %}
-    
-                </tbody>
-            </table> -->
+            <div style="height: 330px; overflow-y: scroll;">
+                <table class="table table-bordered table-sm">
+                    <thead class="bg-1" style="color: #e0fbfc;">
+                        <tr>
+                            <th scope="col" style="width: 300px;">Logged time</th>
+                            <th id="attr1" scope="col" style="width: 250px;"></th>
+                            <th id="attr2" scope="col" style="width: 250px;"></th>
+                            <th id="attr3" scope="col" style="width: 250px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="logdata"></tbody>
+                </table>
+            </div>
         </form>
     </div>
     <script type="text/javascript">
+        function httpGet(theUrl) {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open("GET", theUrl); // false for synchronous request
+            xmlHttp.send();
+            return xmlHttp;
+        }
+
         function update_logs(proj, serial) {
-            
+            var xmlHttp = httpGet("/data/"+proj+"/"+serial+"/");
+            xmlHttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var res = JSON.parse(xmlHttp.responseText);
+                    var attrs = res['attrs'];
+                    var logs = res['logs'];
+                    document.querySelector("#attr1").innerHTML = attrs[0];
+                    document.querySelector("#attr2").innerHTML = attrs[1];
+                    document.querySelector("#attr3").innerHTML = attrs[2];
+                    var tbl = document.querySelector("#logdata");
+                    tbl.innerHTML = "";
+                    logs.forEach(log => {
+                        let row = tbl.insertRow();
+                        let loggedtime = row.insertCell(0);
+                        let attr1 = row.insertCell(1);
+                        let attr2 = row.insertCell(2);
+                        let attr3 = row.insertCell(3);
+                        loggedtime.innerHTML = log['logged_time']
+                        attr1.innerHTML = log[attrs[0].toLowerCase()];
+                        attr2.innerHTML = log[attrs[1].toLowerCase()];
+                        attr3.innerHTML = log[attrs[2].toLowerCase()];
+                    });
+                }
+            }
         }
 
         function update_sensors(proj) {
