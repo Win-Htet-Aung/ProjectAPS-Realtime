@@ -100,3 +100,19 @@ def process_data(proj, snum, stype, file):   #data processing
             TiltLog(sensor=sensor, loggedtime=f"{yy}-{mm}-{dd} {time}:00", temp = float(temp), aaxis=float(aaxis), baxis=float(baxis)).save()
     elif (stype == "TP"):
         pass
+
+@login_required
+def chart(request, serial):
+    data = {'chartinfo': {}}
+    sensor = Sensor.objects.get(serial=serial)
+    if sensor.type == 'TVL':
+        datasets = {}
+        data['chartinfo']['labels'] = [t['loggedtime'].strftime("%H:%M") for t in Log.objects.values('loggedtime').order_by('loggedtime')]
+        for i in ['tran', 'vert', 'long']:
+            temp = [float(j[i]) for j in Log.objects.values(i).order_by('loggedtime')]
+            datasets[i] = temp
+        data['chartinfo']['datasets'] = datasets
+        data['chartinfo'] = dumps(data['chartinfo'])
+
+    data['sensor'] = sensor
+    return render(request, 'DataManagement/chart.html', data)

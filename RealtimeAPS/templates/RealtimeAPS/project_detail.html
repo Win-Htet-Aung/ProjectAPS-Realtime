@@ -75,7 +75,7 @@
                     {% for s in project.sensors.all %}
                         <tr>
                             <td><input type="checkbox" name="{{ s.pk }}"></td>
-                            <td><a href="">{{ s.serial }}</a></td>
+                            <td><a href="{% url 'DataManagement:chart' serial=s.serial %}">{{ s.serial }}</a></td>
                             <td>{{ s.type }}</td>
                             <td>{{ s.up_lim_1 }}</td>
                             <td>{{ s.low_lim_1 }}</td>

@@ -6,5 +6,6 @@ app_name = 'DataManagement'
 urlpatterns = [
     path('', views.index, name = 'data'),
     path('upload/', views.data_upload, name = 'upload'),
+    path('chart/<str:serial>/', views.chart, name = 'chart'),
     path('<str:proj>/<str:serial>/', views.data_get, name = 'data_get'),
 ]

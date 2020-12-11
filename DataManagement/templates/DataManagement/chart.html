@@ -1,0 +1,56 @@
+{% extends 'RealtimeAPS/base.html' %}
+{% block required_script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"
+        integrity="sha512-hZf9Qhp3rlDJBvAKvmiG+goaaKRZA6LKUO35oK6EsM0/kjPK32Yw7URqrq3Q+Nvbbt8Usss+IekL7CRn83dYmw=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"
+        integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
+        crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block body_block %}
+    <div class="container-fluid w-100 pr-235 my-2">
+        <div class="w-75 float-left pr-3">
+            <canvas id="myChart"></canvas>
+        </div>
+        <div class="w-25 float-right">
+            <p><strong>Project name : </strong>{{ sensor.project.name }}</p>
+            <p><strong>Sensor number : </strong>{{ sensor.serial }}</p>
+            <p><strong>Sensor type : </strong>{{ sensor.type }}</p>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var chartinfo = JSON.parse("{{ chartinfo|escapejs }}");
+        var line_labels = Object.keys(chartinfo['datasets']);
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'line',
+
+            // The data for our dataset
+            data: {
+                labels: chartinfo['labels'],
+                datasets: [{
+                    label: line_labels[0],
+                    borderColor: 'rgb(238,108,77)',
+                    data: chartinfo['datasets'][line_labels[0]]
+                },{
+                    label: line_labels[1],
+                    borderColor: 'rgb(238,108,77)',
+                    data: chartinfo['datasets'][line_labels[1]]
+                },{
+                    label: line_labels[2],
+                    borderColor: 'rgb(238,108,77)',
+                    data: chartinfo['datasets'][line_labels[2]]
+                }]
+            },
+
+            // Configuration options go here
+            options: {}
+        });
+    </script>
+{% endblock %}
+    
