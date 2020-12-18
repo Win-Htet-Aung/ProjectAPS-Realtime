@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = '$-k*9ho2^h9o$hlvxf)_2hjh2ei(vi0nev&nz=nc$w8fir7ep('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -51,7 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'ProjectAPS-Realtime.urls'
+ROOT_URLCONF = 'ProjectAPSrt.urls'
 
 TEMPLATES = [
     {
@@ -69,21 +70,73 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ProjectAPS-Realtime.wsgi.application'
+WSGI_APPLICATION = 'ProjectAPSrt.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'localhost',
-        'USER': 'root',
-        'PASSWORD': 'MySQLR00tpwd',
-        'NAME': 'iotdb',
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'HOST': 'localhost',
+#        'USER': 'root',
+#        'PASSWORD': 'MySQLR00tpwd',
+#        'NAME': 'projectaps'
+#    }
+#}
+
+# Install PyMySQL as mysqlclient/MySQLdb to use Django's mysqlclient adapter
+# See https://docs.djangoproject.com/en/2.1/ref/databases/#mysql-db-api-drivers
+# for more information
+import pymysql  # noqa: 402
+pymysql.version_info = (1, 4, 6, 'final', 0)  # change mysqlclient version
+pymysql.install_as_MySQLdb()
+
+# [START db_setup]
+if os.getenv('GAE_APPLICATION', None):
+    # Running on production App Engine, so connect to Google Cloud SQL using
+    # the unix socket at /cloudsql/<your-cloudsql-connection string>
+###
+#            'ENGINE': 'django.db.backends.mysql',
+#            'HOST': '/cloudsql/<your-cloudsql-connection-string>',
+#            'NAME': 'polls',
+#            'USER': '<your-database-user>',
+#            'PASSWORD': '<your-database-password>',
+###
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': '/cloudsql/projectaps-296207:us-central1:projectaps',
+               #testdjangokzw:asia-southeast1:polls-instance',
+            'USER': 'projectaps',
+            'PASSWORD': 'projectaps',
+            'NAME': 'projectaps',
+        }
     }
-}
+else:
+    # Running locally so connect to either a local MySQL instance or connect to
+    # Cloud SQL via the proxy. To start the proxy via command line:
+    #
+    #     $ cloud_sql_proxy -instances=[INSTANCE_CONNECTION_NAME]=tcp:3306
+    #
+    # See https://cloud.google.com/sql/docs/mysql-connect-proxy
+#            'ENGINE': 'django.db.backends.mysql',
+#            'HOST': '127.0.0.1',
+#            'PORT': '3306',
+#            'NAME': 'polls',
+#            'USER': '<your-database-user>',
+#            'PASSWORD': '<your-database-password>',
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': 'localhost',
+            'PORT': '3306',
+            'NAME': 'projectaps',
+            'USER': 'projectaps',
+            'PASSWORD': 'projectaps',
+        }
+    }
 
 
 # Password validation
@@ -121,7 +174,9 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
-
+STATIC_ROOT = 'static'   #for GAE
 STATIC_URL = '/static/'
 
+# login
 LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
