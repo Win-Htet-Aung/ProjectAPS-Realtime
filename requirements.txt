@@ -1,2 +1,6 @@
-channels==3.0.2
 channels-redis==3.2.0
+Django==3.0.7
+PyMySQL==0.9.3
+djangorestframework==3.11.1
+sendgrid==6.4.5
+requests==2.24.0
