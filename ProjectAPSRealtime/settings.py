@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'RealtimeAPS',
     'DataManagement',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -51,7 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'ProjectAPS-Realtime.urls'
+ROOT_URLCONF = 'ProjectAPSRealtime.urls'
 
 TEMPLATES = [
     {
@@ -69,7 +70,16 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ProjectAPS-Realtime.wsgi.application'
+WSGI_APPLICATION = 'ProjectAPSRealtime.wsgi.application'
+ASGI_APPLICATION = "ProjectAPSRealtime.asgi.application"
+CHANNEL_LAYERS = {
+    'default': {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 
 # Database

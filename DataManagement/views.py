@@ -112,6 +112,7 @@ def chart(request, serial):
             temp = [float(j[i]) for j in Log.objects.values(i).order_by('loggedtime')]
             datasets[i] = temp
         data['chartinfo']['datasets'] = datasets
+        data['chartinfo']['serial'] = sensor.serial
         data['chartinfo'] = dumps(data['chartinfo'])
 
     data['sensor'] = sensor

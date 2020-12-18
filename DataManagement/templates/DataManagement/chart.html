@@ -9,6 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"
         integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
         crossorigin="anonymous"></script>
+
 {% endblock %}
 
 {% block body_block %}
@@ -24,33 +25,59 @@
     </div>
     <script type="text/javascript">
         var chartinfo = JSON.parse("{{ chartinfo|escapejs }}");
+        var ser = chartinfo['serial'];
+        const soc = new WebSocket('ws://' + window.location.host + '/ws/dataplotter/'+ ser + '/');
         var line_labels = Object.keys(chartinfo['datasets']);
         var ctx = document.getElementById('myChart').getContext('2d');
-        var chart = new Chart(ctx, {
-            // The type of chart we want to create
-            type: 'line',
+        var data = {
+                // The type of chart we want to create
+                type: 'line',
 
-            // The data for our dataset
-            data: {
-                labels: chartinfo['labels'],
-                datasets: [{
-                    label: line_labels[0],
-                    borderColor: 'rgb(238,108,77)',
-                    data: chartinfo['datasets'][line_labels[0]]
-                },{
-                    label: line_labels[1],
-                    borderColor: 'rgb(238,108,77)',
-                    data: chartinfo['datasets'][line_labels[1]]
-                },{
-                    label: line_labels[2],
-                    borderColor: 'rgb(238,108,77)',
-                    data: chartinfo['datasets'][line_labels[2]]
-                }]
-            },
+                // The data for our dataset
+                data: {
+                    labels: chartinfo['labels'],
+                    datasets: [{
+                        label: line_labels[0],
+                        borderColor: 'rgb(238,108,77)',
+                        data: chartinfo['datasets'][line_labels[0]]
+                    }, {
+                        label: line_labels[1],
+                        borderColor: 'rgb(238,108,77)',
+                        data: chartinfo['datasets'][line_labels[1]]
+                    }, {
+                        label: line_labels[2],
+                        borderColor: 'rgb(238,108,77)',
+                        data: chartinfo['datasets'][line_labels[2]]
+                    }]
+                },
 
-            // Configuration options go here
-            options: {}
-        });
+                // Configuration options go here
+                options: {}
+            };
+        var chart = new Chart(ctx, data);
+        soc.onopen = function (e) {
+
+        };
+        soc.onmessage = function (e) {
+            var new_data = JSON.parse(e.data);
+            var l = data['data']['labels'];
+            var tran = data['data']['datasets'][0]['data'];
+            var vert = data['data']['datasets'][1]['data'];
+            var long = data['data']['datasets'][2]['data'];
+            l.shift(); tran.shift(); vert.shift(); long.shift();
+            l.push(new_data['label']);
+            tran.push(new_data['tran']);
+            vert.push(new_data['vert']);
+            long.push(new_data['long']);
+            data['labels'] = l;
+            data['data']['datasets'][0]['data'] = tran;
+            data['data']['datasets'][1]['data'] = vert;
+            data['data']['datasets'][2]['data'] = long;
+            chart.update();
+        };
+        soc.onclose = function (e) {
+            alert("connection closed!");
+        };
     </script>
 {% endblock %}
     
