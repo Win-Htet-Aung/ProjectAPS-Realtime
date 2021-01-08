@@ -53,11 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-<<<<<<< HEAD:ProjectAPSRealtime/settings.py
-ROOT_URLCONF = 'ProjectAPSRealtime.urls'
-=======
 ROOT_URLCONF = 'ProjectAPSrt.urls'
->>>>>>> 16494714ecd1efe72ed98ef9c97889df3da2815e:ProjectAPSrt/settings.py
 
 TEMPLATES = [
     {
@@ -75,9 +71,8 @@ TEMPLATES = [
     },
 ]
 
-<<<<<<< HEAD:ProjectAPSRealtime/settings.py
-WSGI_APPLICATION = 'ProjectAPSRealtime.wsgi.application'
-ASGI_APPLICATION = "ProjectAPSRealtime.asgi.application"
+WSGI_APPLICATION = "ProjectAPSrt.wsgi.application"
+ASGI_APPLICATION = "ProjectAPSrt.asgi.application"
 CHANNEL_LAYERS = {
     'default': {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -86,9 +81,6 @@ CHANNEL_LAYERS = {
         },
     },
 }
-=======
-WSGI_APPLICATION = 'ProjectAPSrt.wsgi.application'
->>>>>>> 16494714ecd1efe72ed98ef9c97889df3da2815e:ProjectAPSrt/settings.py
 
 
 # Database
