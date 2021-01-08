@@ -43,3 +43,8 @@ class ACLog(models.Model):
     cola = models.DecimalField(max_digits=20, decimal_places=4)
     colb = models.DecimalField(max_digits=20, decimal_places=4)
     colc = models.DecimalField(max_digits=10, decimal_places=4)
+
+class TPLog(models.Model):
+    sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE, related_name = 'tplogs')
+    loggedtime = models.DateTimeField()
+    temp = models.DecimalField(max_digits=10, decimal_places=4)

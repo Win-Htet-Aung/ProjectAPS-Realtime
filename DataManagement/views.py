@@ -3,8 +3,19 @@ from django.contrib.auth.decorators import *
 from django.http import JsonResponse, FileResponse, HttpResponse
 from DataManagement.models import *
 from RealtimeAPS.models import *
-from json import dumps
+from json import dumps, loads
+from google.cloud import pubsub
 import csv
+import datetime
+import random
+import os
+import requests
+import websocket
+import time
+
+pdir = os.path.dirname(os.path.abspath(__file__))
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = pdir + "\\MyIoT-61c1e4f98fcf.json"
+subscriber = pubsub.SubscriberClient()
 
 # Create your views here.
 @login_required
@@ -54,6 +65,16 @@ def data_get(request, proj, serial):
                 logs.append(l)
             data['attrs'] = attrs
             data['logs'] = logs
+        elif sensor.type == 'TP':
+            attrs = ['Temp']
+            logs = []
+            for i in sensor.tplogs.all():
+                l = {}
+                l['logged_time'] = i.loggedtime
+                l['temp'] = i.temp
+                logs.append(l)
+            data['attrs'] = attrs
+            data['logs'] = logs
         return JsonResponse(data)
     return redirect('/')
 
@@ -99,12 +120,21 @@ def process_data(proj, snum, stype, file):   #data processing
             mm, dd, yy = map(int, date.split('/'))
             TiltLog(sensor=sensor, loggedtime=f"{yy}-{mm}-{dd} {time}:00", temp = float(temp), aaxis=float(aaxis), baxis=float(baxis)).save()
     elif (stype == "TP"):
-        pass
+        for i in range(20):
+            now = datetime.datetime.now()
+            mm, dd, yy = now.month, now.day, now.year
+            hh, mm = now.hour, now.minute
+            time = f"{hh}:{mm}"
+            temp = random.randint(4000, 9999) / 1000
+            TPLog(sensor=sensor, loggedtime=now, temp=temp).save()
+        print('Ok')
 
 @login_required
 def chart(request, serial):
     data = {'chartinfo': {}}
     sensor = Sensor.objects.get(serial=serial)
+    data['chartinfo']['serial'] = sensor.serial
+    data['chartinfo']['sensor_type'] = sensor.type
     if sensor.type == 'TVL':
         datasets = {}
         data['chartinfo']['labels'] = [t['loggedtime'].strftime("%H:%M") for t in Log.objects.values('loggedtime').order_by('loggedtime')]
@@ -112,7 +142,12 @@ def chart(request, serial):
             temp = [float(j[i]) for j in Log.objects.values(i).order_by('loggedtime')]
             datasets[i] = temp
         data['chartinfo']['datasets'] = datasets
-        data['chartinfo']['serial'] = sensor.serial
+        data['chartinfo'] = dumps(data['chartinfo'])
+    elif sensor.type == 'TP':
+        datasets = {}
+        data['chartinfo']['labels'] = [t['loggedtime'].strftime("%H:%M") for t in TPLog.objects.values('loggedtime').order_by('loggedtime')]
+        datasets['temp'] = [float(j['temp']) for j in TPLog.objects.values('temp').order_by('loggedtime')]
+        data['chartinfo']['datasets'] = datasets
         data['chartinfo'] = dumps(data['chartinfo'])
 
     data['sensor'] = sensor

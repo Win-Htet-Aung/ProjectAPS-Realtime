@@ -1,4 +1,5 @@
 import json
+from DataManagement import data_subscriber
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import AsyncWebsocketConsumer
 
