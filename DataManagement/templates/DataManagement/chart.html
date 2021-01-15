@@ -27,7 +27,8 @@
         var chartinfo = JSON.parse("{{ chartinfo|escapejs }}");
         var ser = chartinfo['serial'];
         console.log(ser);
-        const soc = new WebSocket('ws://' + window.location.host + '/ws/dataplotter/'+ ser + '/');
+        var ws_scheme = window.location.protocol == "https:" ? "wss://" : "ws://";
+        const soc = new WebSocket(ws_scheme + window.location.host + '/ws/dataplotter/'+ ser + '/');
         var line_labels = Object.keys(chartinfo['datasets']);
         var ctx = document.getElementById('myChart').getContext('2d');
         if (chartinfo['sensor_type'] == "TVL") {
