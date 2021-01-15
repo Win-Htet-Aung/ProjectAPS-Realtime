@@ -4,18 +4,15 @@ from django.http import JsonResponse, FileResponse, HttpResponse
 from DataManagement.models import *
 from RealtimeAPS.models import *
 from json import dumps, loads
-from google.cloud import pubsub
 import csv
 import datetime
 import random
 import os
 import requests
-import websocket
-import time
 
-pdir = os.path.dirname(os.path.abspath(__file__))
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = pdir + "\\MyIoT-61c1e4f98fcf.json"
-subscriber = pubsub.SubscriberClient()
+# pdir = os.path.dirname(os.path.abspath(__file__))
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = pdir + "\\MyIoT-61c1e4f98fcf.json"
+# subscriber = pubsub.SubscriberClient()
 
 # Create your views here.
 @login_required
