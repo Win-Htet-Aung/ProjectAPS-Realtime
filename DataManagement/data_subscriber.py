@@ -6,7 +6,7 @@ import websocket
 import datetime
 
 pdir = os.path.dirname(os.path.abspath(__file__))
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = pdir + "\\MyIoT-61c1e4f98fcf.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(pdir, "MyIoT-61c1e4f98fcf.json")
 
 class Handler:
     def __init__(self):
