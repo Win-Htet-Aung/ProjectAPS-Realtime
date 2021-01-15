@@ -159,8 +159,7 @@ def project_sensor_add(request, pk):
             action = form.get('action')
             if action == 'Remove':
                 for x in [int(i) for i in form if i.isdigit()]:
-                    user = User.objects.get(id = x)
-                    UserProject.objects.get(user=user, project=proj).delete()
+                    Sensor.objects.get(id = x).delete()
             else:
                 serial = form.get('serial')
                 s_type = form.get('sensor_type')

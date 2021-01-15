@@ -10,10 +10,6 @@ import random
 import os
 import requests
 
-# pdir = os.path.dirname(os.path.abspath(__file__))
-# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = pdir + "\\MyIoT-61c1e4f98fcf.json"
-# subscriber = pubsub.SubscriberClient()
-
 # Create your views here.
 @login_required
 def index(request):
