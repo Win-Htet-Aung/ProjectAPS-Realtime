@@ -145,8 +145,16 @@ def chart(request, serial):
         data['chartinfo'] = dumps(data['chartinfo'])
     elif sensor.type == 'TP':
         datasets = {}
-        data['chartinfo']['labels'] = [t['loggedtime'].strftime("%H:%M") for t in TPLog.objects.values('loggedtime').order_by('loggedtime')]
-        datasets['temp'] = [float(j['temp']) for j in TPLog.objects.values('temp').order_by('loggedtime')]
+        data['chartinfo']['labels'] = []
+        for i, t in enumerate(TPLog.objects.values('loggedtime').order_by('-loggedtime')):
+            data['chartinfo']['labels'].insert(0, t['loggedtime'].strftime("%H:%M"))
+            if i == 19:
+                break
+        datasets['temp'] = []
+        for i, j in enumerate(TPLog.objects.values('temp').order_by('-loggedtime')):
+            datasets['temp'].insert(0, float(j['temp']))
+            if i == 19:
+                break
         data['chartinfo']['datasets'] = datasets
         data['chartinfo'] = dumps(data['chartinfo'])
 

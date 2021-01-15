@@ -1,10 +1,8 @@
 from google.cloud import pubsub
+from DataManagement.models import *
 import os
 import json
-import requests
 import websocket
-import time
-import random
 import datetime
 
 pdir = os.path.dirname(os.path.abspath(__file__))
@@ -21,15 +19,24 @@ class Handler:
         # print("subscribed!")
 
     def callback(self, message):
-        self.ws.connect("ws://localhost:8000/ws/dataplotter/S3001/")
-        now = datetime.datetime.now()
-        hour, minute = now.hour, now.minute
-        label = f"{hour}:{minute}"
         resp = message.data
         data = resp.decode("UTF-8")
-        data = json.loads(data)
-        self.ws.send(json.dumps({'label':label, 'temp':data['temp']}))
-        message.ack()
-        self.ws.close()
+        print(data)
+        try:
+            data = json.loads(data)
+        except:
+            print('invalid format :', data)
+        else:
+            serial = data['serial']
+            sensor = Sensor.objects.get(serial = serial)
+            self.ws.connect(f"ws://localhost:8000/ws/dataplotter/{serial}/")
+            now = datetime.datetime.fromtimestamp(data['timestamp'])
+            hour, minute = now.hour, now.minute
+            label = f"{hour}:{minute}"
+            self.ws.send(json.dumps({'label':label, 'temp':data['temp']}))
+            self.ws.close()
+            TPLog(sensor=sensor, loggedtime=now, temp=data['temp']).save()
+        finally:
+            message.ack()
 
 handler = Handler()
