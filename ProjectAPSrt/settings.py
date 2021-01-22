@@ -25,7 +25,10 @@ SECRET_KEY = '$-k*9ho2^h9o$hlvxf)_2hjh2ei(vi0nev&nz=nc$w8fir7ep('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    'https://projectaps-296207.uc.r.appspot.com',
+]
 
 
 # Application definition
