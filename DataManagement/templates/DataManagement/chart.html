@@ -27,8 +27,8 @@
         var chartinfo = JSON.parse("{{ chartinfo|escapejs }}");
         var ser = chartinfo['serial'];
         console.log(ser);
-        var ws_scheme = window.location.protocol == "https:" ? "wss://" : "ws://";
-        const soc = new WebSocket(ws_scheme + window.location.host + '/ws/dataplotter/'+ ser + '/');
+        // var ws_scheme = window.location.protocol == "https:" ? "wss://" : "ws://";
+        // const soc = new WebSocket(ws_scheme + window.location.host + '/ws/dataplotter/'+ ser + '/');
         var line_labels = Object.keys(chartinfo['datasets']);
         var ctx = document.getElementById('myChart').getContext('2d');
         if (chartinfo['sensor_type'] == "TVL") {
@@ -78,37 +78,6 @@
         }
 
         var chart = new Chart(ctx, data);
-        soc.onopen = function (e) {
-            console.log("connection opened!");
-        };
-        soc.onmessage = function (e) {
-            var new_data = JSON.parse(e.data);
-            var l = data['data']['labels'];
-            if (chartinfo['sensor_type'] == "TVL") {
-                var tran = data['data']['datasets'][0]['data'];
-                var vert = data['data']['datasets'][1]['data'];
-                var long = data['data']['datasets'][2]['data'];
-                tran.shift(); vert.shift(); long.shift();
-                tran.push(new_data['tran']);
-                vert.push(new_data['vert']);
-                long.push(new_data['long']);
-                data['data']['datasets'][0]['data'] = tran;
-                data['data']['datasets'][1]['data'] = vert;
-                data['data']['datasets'][2]['data'] = long;
-            } else if (chartinfo['sensor_type'] == 'TP') {
-                var temp = data['data']['datasets'][0]['data'];
-                temp.shift();
-                temp.push(new_data['temp']);
-                data['data']['datasets'][0]['data'] = temp;
-            }
-            l.shift();
-            l.push(new_data['label']);
-            data['labels'] = l;
-            chart.update();
-        };
-        soc.onclose = function (e) {
-            console.log("connection closed!");
-        };
     </script>
 {% endblock %}
     

@@ -17,16 +17,16 @@ import DataManagement.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ProjectAPSrt.settings')
 
-# application = get_asgi_application()
-application = ProtocolTypeRouter(
-    {
-        'http': get_asgi_application(),
-        'websocket': AllowedHostsOriginValidator(
-            AuthMiddlewareStack(
-                URLRouter(
-                    DataManagement.routing.websocket_urlpatterns
-                )
-            ),
-        ),
-    }
-)
+application = get_asgi_application()
+# application = ProtocolTypeRouter(
+#     {
+#         'http': get_asgi_application(),
+#         'websocket': AllowedHostsOriginValidator(
+#             AuthMiddlewareStack(
+#                 URLRouter(
+#                     DataManagement.routing.websocket_urlpatterns
+#                 )
+#             ),
+#         ),
+#     }
+# )
